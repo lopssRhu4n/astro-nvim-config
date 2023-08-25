@@ -21,7 +21,8 @@ return {
         ["<leader>top"] = {
             ':lua require("neotest").output_panel.toggle() <CR>',
             desc = 'Neotest open test output_panel'
-        }
+        },
+        ["<leader>ar"] = { ":AutoRun <CR>", desc = "Activate auto run on save with prompt params"}
     },
     v = {["J"] = {":m '>+1<CR>gv=gv"}, ["K"] = {":m '>-2<CR>gv=gv"}}
 
