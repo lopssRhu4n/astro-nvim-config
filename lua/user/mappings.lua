@@ -7,7 +7,7 @@ return {
             desc = 'Neotest File Entirely'
         },
         ["<leader>ts"] = {
-            ':lua require("neotest).summary.toggle() <CR>',
+            ':lua require("neotest").summary.toggle() <CR>',
             desc = 'Neotest summary toggle'
         },
         ["<leader>tr"] = {
