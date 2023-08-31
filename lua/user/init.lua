@@ -1,8 +1,18 @@
-local attach_to_buffer = function(output_bufnr, pattern, command, compile, compileCommand)
+local getFileExtension = function()
+    local current_file = vim.fn.expand('%')
+    return current_file:match("%.([^%.]+)$")
+end
+
+local attach_to_buffer = function(output_bufnr, pattern, command, compile,
+                                  compileCommand)
     vim.api.nvim_create_autocmd("BufWritePost", {
         group = vim.api.nvim_create_augroup("run_on_save", {clear = true}),
         pattern = pattern,
         callback = function()
+
+            -- Cleaning buffer lines before adding new info
+            vim.api.nvim_buf_set_lines(output_bufnr, 0, -1, false, {})
+
             local append_data = function(_, data)
                 if data then
                     vim.api
@@ -11,7 +21,7 @@ local attach_to_buffer = function(output_bufnr, pattern, command, compile, compi
             end
 
             if compile ~= 0 then
-                vim.fn.jobstart(compileCommand, { stdout_buffered = false})
+                vim.fn.jobstart(compileCommand, {stdout_buffered = false})
             end
 
             vim.fn.jobstart(command, {
@@ -38,12 +48,11 @@ vim.api.nvim_create_user_command("AutoRun", function()
     local compile = tonumber(vim.fn.input("Compile: "))
     local compileCommand
     if compile ~= 0 then
-      compileCommand = vim.split(vim.fn.input("Compile command: "), " ")
+        compileCommand = vim.split(vim.fn.input("Compile command: "), " ")
     end
 
     attach_to_buffer(bufnr, pattern, command, compile, compileCommand)
 end, {})
-
 
 return {
     colorscheme = "catppuccin",
