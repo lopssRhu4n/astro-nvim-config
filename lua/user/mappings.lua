@@ -22,7 +22,14 @@ return {
             ':lua require("neotest").output_panel.toggle() <CR>',
             desc = 'Neotest open test output_panel'
         },
-        ["<leader>ar"] = { ":AutoRun <CR>", desc = "Activate auto run on save with prompt params"}
+        ["<leader>ap"] = {
+            ":AutoRun <CR>",
+            desc = "Activate auto run on save with prompt params"
+        },
+        ["<leader>ar"] = {
+            ":AutoRunCurrentBuf <CR>",
+            desc = "Activate auto run on save with default config for file extension"
+        }
     },
     v = {["J"] = {":m '>+1<CR>gv=gv"}, ["K"] = {":m '>-2<CR>gv=gv"}}
 

@@ -3,6 +3,26 @@ local getFileExtension = function()
     return current_file:match("%.([^%.]+)$")
 end
 
+local fileTable = {
+    ["cpp"] = {
+        ["command"] = "./output",
+        ["compile"] = true,
+        ["compileCommand"] = {"g++", "-o", "output", "main.cpp"}
+
+    },
+
+    ["java"] = {
+        ["command"] = "java bin/",
+        ["compile"] = true,
+        ["compileCommand"] = "javac -o bin/ src/*.java"
+    },
+    ["go"] = {
+        ["command"] = "go run *.go",
+        ["compile"] = false,
+        ["compileCommand"] = nil
+    }
+}
+
 local attach_to_buffer = function(output_bufnr, pattern, command, compile,
                                   compileCommand)
     vim.api.nvim_create_autocmd("BufWritePost", {
@@ -14,6 +34,7 @@ local attach_to_buffer = function(output_bufnr, pattern, command, compile,
             vim.api.nvim_buf_set_lines(output_bufnr, 0, -1, false, {})
 
             local append_data = function(_, data)
+                print(data)
                 if data then
                     vim.api
                         .nvim_buf_set_lines(output_bufnr, -1, -1, false, data)
@@ -35,11 +56,21 @@ local attach_to_buffer = function(output_bufnr, pattern, command, compile,
 
 end
 
--- vim.api.nvim_create_user_command("AutoRunCurrentBuf", function()
---     vim.cmd("vs")
---     local bufnr = vim.api.nvim_create_buf(false, true)
---     vim.api.nvim_open_win(bufnr, true, {})
--- end, {})
+vim.api.nvim_create_user_command("AutoRunCurrentBuf", function()
+    local pattern = getFileExtension()
+
+    vim.cmd("vsplit")
+
+    local bufnr = vim.api.nvim_create_buf(true, true)
+    local winnr = vim.api.nvim_get_current_win()
+
+    attach_to_buffer(bufnr, "*." .. pattern, fileTable[pattern]["command"],
+                     fileTable[pattern]["compile"],
+                     fileTable[pattern]["compileCommand"])
+
+    vim.api.nvim_win_set_buf(winnr, bufnr)
+
+end, {})
 
 vim.api.nvim_create_user_command("AutoRun", function()
     local bufnr = tonumber(vim.fn.input("Bufnr: "))
